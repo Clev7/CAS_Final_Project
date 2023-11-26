@@ -1,8 +1,25 @@
-patches-own [value]
+patches-own [
+  num_fishes
+  agents
+]
+
+globals [
+  sustenance
+]
 
 to setup
   clear-all
   reset-ticks
+
+  ; Define Global Variables
+  sustenance = 2
+
+  if [scenario = "1 Hawk, 1 Dove"] [
+    ask patches [
+      set agents []
+      set agents lput
+    ]
+  ]
 end
 
 to go
@@ -23,10 +40,10 @@ to go
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-284
-16
-721
-454
+632
+19
+1303
+691
 -1
 -1
 13.0
@@ -39,10 +56,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-25
+25
+-25
+25
 0
 0
 1
@@ -51,21 +68,11 @@ ticks
 
 CHOOSER
 20
-95
-158
-140
-Playstyle
-Playstyle
-"Pacifist" "Vengeance" "Recovery"
-2
-
-CHOOSER
-20
 158
 161
 203
-Scenario
-Scenario
+scenario
+scenario
 "1 Hawk, 1 Dove" "1 Dove, 1 Dove" "1 Hawk, 1 Hawk"
 2
 
@@ -146,6 +153,27 @@ max-take-amt
 1
 0
 Number
+
+INPUTBOX
+130
+244
+285
+304
+hawk-steal-prob
+0.25
+1
+0
+Number
+
+CHOOSER
+20
+95
+158
+140
+playstyle
+playstyle
+"Pacifist" "Vengeance" "Recovery"
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
