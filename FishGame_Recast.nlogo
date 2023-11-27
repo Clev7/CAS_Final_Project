@@ -1,49 +1,267 @@
+globals [
+  sustenance
+
+  hawkFood
+  doveFood
+  roundNumber
+  mode
+]
+
 patches-own [
   num_fishes
   agents
-]
 
-globals [
-  sustenance
+  value
+  pool
 ]
 
 to setup
   clear-all
   reset-ticks
-
-  ; Define Global Variables
-  sustenance = 2
-
-  if [scenario = "1 Hawk, 1 Dove"] [
-    ask patches [
-      set agents []
-      set agents lput
-    ]
-  ]
 end
 
 to go
 
- ; if [Playstyle="Recovery"] [
-
-  ;]
-  ;if [Playstyle="Pacifist"] [
-  ;]
-
-  ;if [Playstyle="Vengeance"][]
   ask patches [
-    set pcolor one-of [red blue]
-    set value random 10
+    fishGame self
   ]
 
   tick
 end
+
+to fishGame [current-patch]
+  if scenario = "1 Hawk, 1 Dove" [
+    set hawkFood 0
+    set doveFood 0
+    set pool fish-count
+    set roundNumber 0
+
+    let leftModeActivate False
+    let rightModeActivate False
+
+    let notBreak True
+
+    while [notBreak] [
+      let hawkTake random 5
+      let doveTake random 5
+
+      ; Hawk's turn
+      let randNum random-float 1
+
+      if randNum < hawk-steal-prob [
+        set doveFood doveFood - hawkTake
+        set hawkFood hawkFood + hawkTake
+        set rightModeActivate True
+      ]
+
+      if randNum >= hawk-steal-prob [
+        set pool pool - hawkTake
+        set hawkFood hawkFood + hawkTake
+      ]
+
+      ; Dove's turn
+      set pool pool - doveTake
+      set doveFood doveFood + doveTake
+
+      if rightModeActivate and mode = "Recovery" [
+        set hawkFood hawkFood - recovery-amount
+        set doveFood doveFood + recovery-amount
+        set rightModeActivate False
+      ]
+
+      if rightModeActivate and mode = "Vengeance" [
+        set doveTake random hawk-steal-amt
+        set hawkFood hawkFood - doveTake
+        set doveFood doveFood + doveTake
+        set rightModeActivate False
+      ]
+
+      ; Round over, eat
+      set hawkFood hawkFood - 2
+      set doveFood doveFood - 2
+
+      ; Check if round is over
+      if hawkFood <= 0 [
+        ask current-patch [set pcolor blue]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+      if doveFood <= 0 [
+        ask current-patch [set pcolor red]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      ; Increment round number
+      set roundNumber roundNumber + 1
+
+      if roundNumber = 30 [
+        ask current-patch [set pcolor green]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      set pool pool * 2
+    ]
+  ]
+
+  if scenario = "1 Hawk, 1 Hawk" [
+    let hawkFood1 0
+    let hawkFood2 0
+    set pool fish-count
+    set roundNumber 0
+
+    let leftModeActivate False
+    let rightModeActivate False
+
+    let notBreak True
+
+    while [notBreak] [
+      let hawk1Take random 5
+      let hawk2Take random 5
+
+      ; Hawk 1's turn
+      let randNum random-float 1
+
+      if randNum < hawk-steal-prob [
+        set hawkFood2 hawkFood2 - hawk1Take
+        set hawkFood1 hawkFood1 + hawk1Take
+        set rightModeActivate True
+      ]
+
+      if randNum >= hawk-steal-prob [
+        set pool pool - hawk1Take
+        set hawkFood1 hawkFood1 + hawk1Take
+      ]
+
+      ; Hawk 2's turn
+      set randNum random-float 1
+
+      if randNum < hawk-steal-prob [
+        set hawkFood1 hawkFood1 - hawk2Take
+        set hawkFood2 hawkFood2 + hawk2Take
+        set leftModeActivate True
+      ]
+
+      if randNum >= hawk-steal-prob [
+        set pool pool - hawk2Take
+        set hawkFood2 hawkFood2 + hawk2Take
+      ]
+
+      ; Modes Activate!
+
+      ; Left Hawk GO!
+      if leftModeActivate and mode = "Recovery" [
+        set hawkFood2 hawkFood2 - recovery-amount
+        set hawkFood1 hawkFood1 + recovery-amount
+        set leftModeActivate False
+      ]
+
+      if leftModeActivate and mode = "Vengeance" [
+        set hawk2Take random 5
+        set hawkFood2 hawkFood2 - hawk2Take
+        set hawkFood1 hawkFood1 + hawk2Take
+        set leftModeActivate False
+      ]
+
+      ; Right Hawk GO!
+      if rightModeActivate and mode = "Recovery" [
+        set hawkFood1 hawkFood1 - recovery-amount
+        set hawkFood2 hawkFood2 + recovery-amount
+        set rightModeActivate False
+      ]
+
+      if rightModeActivate and mode = "Vengeance" [
+        set hawk2Take random 5
+        set hawkFood1 hawkFood1 - hawk2Take
+        set hawkFood2 hawkFood2 + hawk2Take
+        set rightModeActivate False
+      ]
+
+      ; Round over, eat
+      set hawkFood1 hawkFood1 - 2
+      set hawkFood2 hawkFood2 - 2
+
+      ; Check if round is over
+      if hawkFood1 <= 0 [
+        ask current-patch [set pcolor blue]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+      if hawkFood2 <= 0 [
+        ask current-patch [set pcolor red]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      ; Increment round number
+      set roundNumber roundNumber + 1
+
+      if roundNumber = 30 [
+        ask current-patch [set pcolor green]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      set pool pool * 2
+    ]
+  ]
+
+  if scenario = "1 Dove, 1 Dove" [
+    let doveFood1 0
+    let doveFood2 0
+    set pool fish-count
+    set roundNumber 0
+
+    let notBreak True
+
+    while [notBreak] [
+      let dove1Take random 5
+      let dove2Take random 5
+
+      ; Dove 1's turn
+      set pool pool - dove1Take
+      set doveFood1 doveFood1 + dove1Take
+
+      ; Dove 2's turn
+      set pool pool - dove2Take
+      set doveFood2 doveFood2 + dove2Take
+
+      ; Round over, eat
+      set doveFood1 doveFood1 - 2
+      set doveFood2 doveFood2 - 2
+
+      ; Check if round is over
+      if doveFood1 <= 0 [
+        ask current-patch [set pcolor blue]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+      if doveFood2 <= 0 [
+        ask current-patch [set pcolor red]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      ; Increment round number
+      set roundNumber roundNumber + 1
+
+      if roundNumber = 30 [
+        ask current-patch [set pcolor green]
+        ask current-patch [set value roundNumber]
+        set notBreak False
+      ]
+
+      set pool pool * 2
+    ]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-632
-19
-1303
-691
+370
+7
+1041
+679
 -1
 -1
 13.0
@@ -74,7 +292,7 @@ CHOOSER
 scenario
 scenario
 "1 Hawk, 1 Dove" "1 Dove, 1 Dove" "1 Hawk, 1 Hawk"
-2
+0
 
 BUTTON
 25
