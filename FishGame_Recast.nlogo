@@ -5,12 +5,13 @@ globals [
   doveFood
   roundNumber
   mode
+  number-of-blue
+  number-of-red
 ]
 
 patches-own [
   num_fishes
   agents
-
   value
   pool
 ]
@@ -25,7 +26,18 @@ to go
   ask patches [
     fishGame self
   ]
+  ask patches [
 
+    if pcolor = blue[
+        set number-of-blue number-of-blue + 1
+
+     ]
+    if pcolor = red[
+        set number-of-red number-of-red + 1
+     ]
+
+  ]
+;  analyze-results
   tick
 end
 
@@ -35,6 +47,8 @@ to fishGame [current-patch]
     set doveFood 0
     set pool fish-count
     set roundNumber 0
+    set number-of-blue 0
+    set number-of-red 0
 
     let leftModeActivate False
     let rightModeActivate False
@@ -42,8 +56,8 @@ to fishGame [current-patch]
     let notBreak True
 
     while [notBreak] [
-      let hawkTake random 5
-      let doveTake random 5
+      let hawkTake random max-take-amt ; update by SA
+      let doveTake random max-take-amt ; update by SA
 
       ; Hawk's turn
       let randNum random-float 1
@@ -100,7 +114,6 @@ to fishGame [current-patch]
         ask current-patch [set value roundNumber]
         set notBreak False
       ]
-
       set pool pool * 2
     ]
   ]
@@ -117,8 +130,8 @@ to fishGame [current-patch]
     let notBreak True
 
     while [notBreak] [
-      let hawk1Take random 5
-      let hawk2Take random 5
+      let hawk1Take random max-take-amt ; updated by SA
+      let hawk2Take random max-take-amt ; updated by SA
 
       ; Hawk 1's turn
       let randNum random-float 1
@@ -216,8 +229,8 @@ to fishGame [current-patch]
     let notBreak True
 
     while [notBreak] [
-      let dove1Take random 5
-      let dove2Take random 5
+      let dove1Take random max-take-amt ; updated by SA
+      let dove2Take random max-take-amt ; updated by SA
 
       ; Dove 1's turn
       set pool pool - dove1Take
@@ -334,7 +347,7 @@ INPUTBOX
 175
 82
 fish-count
-10.0
+1.0E7
 1
 0
 Number
@@ -391,7 +404,47 @@ CHOOSER
 playstyle
 playstyle
 "Pacifist" "Vengeance" "Recovery"
-2
+1
+
+PLOT
+1068
+250
+1268
+400
+number of rounds per patch
+patch
+rounds
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count turtles"
+
+MONITOR
+1078
+50
+1248
+95
+number of winning doves
+number-of-blue
+17
+1
+11
+
+MONITOR
+1080
+106
+1251
+151
+number of winning hawks
+number-of-red
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
