@@ -39,8 +39,8 @@ to go
      ]
 
   ]
+
   histogram values
-  ;print values
 
   let i 0
   print word "The number of elements is " length values
@@ -411,7 +411,7 @@ INPUTBOX
 285
 304
 hawk-steal-prob
-0.25
+0.01
 1
 0
 Number
