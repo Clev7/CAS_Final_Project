@@ -47,7 +47,7 @@ to go
   while [i < length values] [
     ;write item i values
     ifelse (i + 1) mod 51 = 0 [
-      print word item i values "\n"
+      print item i values
     ] [
       type item i values
     ]
@@ -132,6 +132,7 @@ to fishGame [current-patch]
       ]
       set pool pool * 2
     ]
+    set value roundNumber
   ]
 
   if scenario = "1 Hawk, 1 Hawk" [
@@ -234,6 +235,8 @@ to fishGame [current-patch]
 
       set pool pool * 2
     ]
+
+    set value roundNumber
   ]
 
   if scenario = "1 Dove, 1 Dove" [
@@ -283,6 +286,7 @@ to fishGame [current-patch]
 
       set pool pool * 2
     ]
+    set value roundNumber
   ]
 end
 @#$#@#$#@
