@@ -40,7 +40,19 @@ to go
 
   ]
   histogram values
-  print values
+  ;print values
+
+  let i 0
+  print word "The number of elements is " length values
+  while [i < length values] [
+    ;write item i values
+    ifelse (i + 1) mod 51 = 0 [
+      print word item i values "\n"
+    ] [
+      type item i values
+    ]
+    set i i + 1
+  ]
 ;  analyze-results
   tick
 end
@@ -408,7 +420,7 @@ CHOOSER
 playstyle
 playstyle
 "Pacifist" "Vengeance" "Recovery"
-1
+0
 
 PLOT
 1068
