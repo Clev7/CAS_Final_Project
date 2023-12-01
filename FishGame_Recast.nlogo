@@ -26,8 +26,10 @@ to go
   ask patches [
     fishGame self
   ]
-  ask patches [
 
+  let values []
+  ask patches [
+    set values lput value values
     if pcolor = blue[
         set number-of-blue number-of-blue + 1
 
@@ -37,6 +39,8 @@ to go
      ]
 
   ]
+  histogram values
+  print values
 ;  analyze-results
   tick
 end
