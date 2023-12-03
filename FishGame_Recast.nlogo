@@ -63,8 +63,6 @@ to fishGame [current-patch]
     set doveFood 0
     set pool fish-count
     set roundNumber 0
-    set number-of-blue 0
-    set number-of-red 0
 
     let leftModeActivate False
     let rightModeActivate False
@@ -114,12 +112,12 @@ to fishGame [current-patch]
       if hawkFood <= 0 [
         ask current-patch [set pcolor blue]
         ask current-patch [set value roundNumber]
-        set notBreak False
+        stop
       ]
       if doveFood <= 0 [
         ask current-patch [set pcolor red]
-        ask current-patch [set value roundNumber]
-        set notBreak False
+        ask current-patch [set value -1 * roundNumber]
+        stop
       ]
 
       ; Increment round number
@@ -132,7 +130,7 @@ to fishGame [current-patch]
       ]
       set pool pool * 2
     ]
-    set value roundNumber
+    ;set value roundNumber
   ]
 
   if scenario = "1 Hawk, 1 Hawk" [
